@@ -20,7 +20,7 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(data)
+		json.NewEncoder(w).Encode(data.Structure)
 		return
 	}
 
@@ -45,7 +45,9 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 
 	count++
 
-	storage.Set(r.URL.String(), response)
+	route := storage.RouteStruct{Structure: response}
+
+	storage.Set(r.URL.String(), route)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)

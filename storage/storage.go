@@ -2,32 +2,39 @@ package storage
 
 import "fmt"
 
+// RouteStruct is a struct for specific route
+type RouteStruct struct {
+	Config    interface{}
+	Structure interface{}
+	Data      []interface{}
+}
+
 type storageStruct struct {
-	routes map[string]interface{}
+	Routes map[string]RouteStruct
 }
 
-func (s *storageStruct) set(id string, data interface{}) {
-	s.routes[id] = data
+func (s *storageStruct) set(id string, route RouteStruct) {
+	s.Routes[id] = route
 }
 
-func (s *storageStruct) get(id string) (data interface{}, err error) {
-	data, ok := s.routes[id]
+func (s *storageStruct) get(id string) (route RouteStruct, err error) {
+	route, ok := s.Routes[id]
 	if ok != true {
-		return nil, fmt.Errorf("%s not found in storage", id)
+		return route, fmt.Errorf("%s not found in storage", id)
 	}
-	return s.routes[id], nil
+	return s.Routes[id], nil
 }
 
 var storageData = storageStruct{
-	routes: make(map[string]interface{}),
+	Routes: make(map[string]RouteStruct),
 }
 
 // Set data in storage
-func Set(id string, data interface{}) {
+func Set(id string, data RouteStruct) {
 	storageData.set(id, data)
 }
 
 // Get data from storage
-func Get(id string) (data interface{}, err error) {
+func Get(id string) (route RouteStruct, err error) {
 	return storageData.get(id)
 }
