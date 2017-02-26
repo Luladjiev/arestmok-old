@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/luladjiev/arestmok/analyzer"
 	"github.com/luladjiev/arestmok/storage"
 )
 
@@ -27,19 +28,33 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 	type Response struct {
 		URL    string
 		Method string
-		Params map[string][]string
+		Query  map[string][]string
+		Body   interface{}
 		Count  int
 	}
 
 	if r.ParseForm() != nil {
+		fmt.Println("Error parsing request form")
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 
+	var body map[string]interface{}
+
+	decoder := json.NewDecoder(r.Body)
+
+	if decoder.Decode(&body) != nil {
+		fmt.Println("Error decoding request body")
+		http.Error(w, "", http.StatusInternalServerError)
+	}
+
+	analyzer.Analyze(body)
+
 	response := Response{
 		URL:    r.URL.String(),
 		Method: r.Method,
-		Params: r.Form,
+		Query:  r.Form,
+		Body:   body,
 		Count:  count,
 	}
 
